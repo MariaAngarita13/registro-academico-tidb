@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Historial de cambios{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Historial de cambios</h1>
+    <p>Auditoría de las últimas 100 acciones realizadas sobre los estudiantes.</p>
+</div>
+
+<div class="panel">
+    {% if registros %}
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+            <th>Usuario</th>
+        </tr>
+        {% for r in registros %}
+        <tr>
+            <td>{{ r.fecha.strftime('%Y-%m-%d %H:%M') if r.fecha else '—' }}</td>
+            <td>
+                <span class="badge {{ 'activo' if r.accion in ['creado', 'editado', 'activado'] else 'inactivo' }}">
+                    {{ r.accion|capitalize }}
+                </span>
+            </td>
+            <td>{{ r.detalle or '—' }}</td>
+            <td>{{ r.usuario_nombre or 'Sistema' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>Todavía no hay cambios registrados.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

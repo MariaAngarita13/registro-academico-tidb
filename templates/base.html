@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Registro Académico{% endblock %} · TiDB Serverless</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="brand">Registro Académico</div>
+        <div class="brand-sub">Bases de datos en la nube</div>
+
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">
+            Panel general
+        </a>
+        <a href="{{ url_for('lista_estudiantes') }}" class="{{ 'active' if request.endpoint in ['lista_estudiantes', 'nuevo_estudiante', 'editar_estudiante'] }}">
+            Estudiantes
+        </a>
+        <a href="{{ url_for('historial') }}" class="{{ 'active' if request.endpoint == 'historial' }}">
+            Historial
+        </a>
+
+        <div class="sidebar-footer">
+            {% if usuario_actual %}
+                Sesión: {{ usuario_actual }} ({{ rol_actual }})<br>
+                <form method="post" action="{{ url_for('logout') }}" style="margin: 6px 0;">
+                    <button type="submit" class="btn btn-ghost" style="width:100%;">Cerrar sesión</button>
+                </form>
+            {% endif %}
+            Conectado a TiDB Serverless<br>
+            Base: {{ db_name_display }}
+        </div>
+    </nav>
+
+    <main class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

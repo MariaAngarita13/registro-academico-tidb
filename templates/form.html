@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar estudiante' if estudiante and estudiante.id else 'Agregar estudiante' }}{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>{{ 'Editar estudiante' if estudiante and estudiante.id else 'Agregar estudiante' }}</h1>
+    <p>Los campos marcados son obligatorios para guardar el registro.</p>
+</div>
+
+<div class="panel">
+    <form method="post" class="form-grid" onsubmit="document.getElementById('btn-guardar').disabled = true; document.getElementById('btn-guardar').textContent = 'Guardando...';">
+        <div class="field full">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required
+                   value="{{ estudiante.nombre if estudiante else '' }}">
+        </div>
+
+        <div class="field full">
+            <label for="correo">Correo institucional</label>
+            <input type="email" id="correo" name="correo" placeholder="nombre@uptc.edu.co"
+                   value="{{ estudiante.correo if estudiante else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="programa_id">Programa *</label>
+            <select id="programa_id" name="programa_id" required>
+                <option value="">Selecciona un programa</option>
+                {% for p in programas %}
+                <option value="{{ p.id }}" {{ 'selected' if estudiante and (estudiante.programa_id|string) == (p.id|string) }}>{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="semestre">Semestre *</label>
+            <input type="number" id="semestre" name="semestre" min="1" max="12" required
+                   value="{{ estudiante.semestre if estudiante else '' }}">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="btn-guardar" class="btn btn-accent">Guardar</button>
+            <a href="{{ url_for('lista_estudiantes') }}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

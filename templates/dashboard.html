@@ -1,0 +1,76 @@
+﻿{% extends "base.html" %}
+{% block title %}Panel general{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Panel general</h1>
+    <p>Resumen del registro de estudiantes almacenado en TiDB Serverless.</p>
+</div>
+
+<div class="stat-strip">
+    <div class="stat">
+        <div class="value">{{ total }}</div>
+        <div class="label">Estudiantes registrados</div>
+    </div>
+    <div class="stat">
+        <div class="value">{{ total_activos }}</div>
+        <div class="label">Activos</div>
+    </div>
+    <div class="stat">
+        <div class="value">{{ total_programas }}</div>
+        <div class="label">Programas distintos</div>
+    </div>
+    <div class="stat">
+        <div class="value">{{ promedio_semestre }}</div>
+        <div class="label">Semestre promedio</div>
+    </div>
+</div>
+
+<div class="panel">
+    <h2>Distribución por programa</h2>
+    {% if por_programa %}
+        {% for p in por_programa %}
+        <div class="bar-row">
+            <div class="bar-label">{{ p.programa }}</div>
+            <div class="bar-track">
+            <div class="bar-fill" style="width: {{ ((p.cantidad / max_cantidad) * 100) | round if max_cantidad > 0 else 0 }}%;"></div>            </div>
+            <div class="bar-count">{{ p.cantidad }}</div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted); font-size: 14px;">Aún no hay estudiantes registrados.</p>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <h2>Últimos registros</h2>
+    {% if recientes %}
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Programa</th>
+            <th>Semestre</th>
+            <th>Estado</th>
+        </tr>
+        {% for e in recientes %}
+        <tr>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.programa }}</td>
+            <td>{{ e.semestre }}</td>
+            <td>
+                <span class="badge {{ 'activo' if e.activo else 'inactivo' }}">
+                    {{ 'Activo' if e.activo else 'Inactivo' }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>Todavía no has agregado ningún estudiante.</p>
+        <a href="{{ url_for('nuevo_estudiante') }}" class="btn btn-accent">Agregar el primero</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

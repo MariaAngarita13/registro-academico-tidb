@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Estudiantes{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Estudiantes</h1>
+    <p>Consulta, busca y administra los registros guardados en la base de datos.</p>
+</div>
+
+<div class="toolbar">
+    <form class="filters" method="get">
+        <input type="text" name="q" placeholder="Buscar por nombre o correo..." value="{{ busqueda }}">
+        <select name="programa" onchange="this.form.submit()">
+            <option value="">Todos los programas</option>
+            {% for p in programas %}
+            <option value="{{ p.id }}" {{ 'selected' if (p.id|string) == programa_filtro }}>{{ p.nombre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-ghost">Filtrar</button>
+    </form>
+    <a href="{{ url_for('nuevo_estudiante') }}" class="btn btn-accent">+ Agregar estudiante</a>
+</div>
+
+<div class="panel">
+    {% if estudiantes %}
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Programa</th>
+            <th>Semestre</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% for e in estudiantes %}
+        <tr>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.correo or '—' }}</td>
+            <td>{{ e.programa }}</td>
+            <td>{{ e.semestre }}</td>
+            <td>
+                <span class="badge {{ 'activo' if e.activo else 'inactivo' }}">
+                    {{ 'Activo' if e.activo else 'Inactivo' }}
+                </span>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <a href="{{ url_for('editar_estudiante', id=e.id) }}" class="btn btn-ghost">Editar</a>
+                    <form method="post" action="{{ url_for('toggle_estudiante', id=e.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-ghost">
+                            {{ 'Desactivar' if e.activo else 'Activar' }}
+                        </button>
+                    </form>
+                    <form method="post" action="{{ url_for('eliminar_estudiante', id=e.id) }}" style="display:inline;"
+                          onsubmit="return confirm('¿Eliminar a {{ e.nombre }}? Esta acción no se puede deshacer.');">
+                        <button type="submit" class="btn btn-danger-ghost">Eliminar</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No hay estudiantes que coincidan con tu búsqueda.</p>
+        <a href="{{ url_for('nuevo_estudiante') }}" class="btn btn-accent">Agregar estudiante</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
