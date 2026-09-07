@@ -627,7 +627,8 @@ def historial():
     return render_template("historial.html", registros=registros)
 
 
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     port = int(os.getenv("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
